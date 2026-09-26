@@ -1,4 +1,5 @@
 use rand::seq::IndexedRandom;
+use crate::player::get_player_position;
 
 pub const CHUNK_WIDTH: usize = 18;
 pub const CHUNK_HEIGHT: usize = 10;
@@ -34,7 +35,6 @@ pub const LEAF: Rgb = (100, 150, 100);
 pub const LEAF_DARK: Rgb = (70, 100, 70);
 pub const CLOUD: Rgb = (200, 200, 200);
 pub const CLOUD_DARK: Rgb = (150, 150, 150);
-
 const LEAF_COLORS: [Rgb; 2] = [LEAF, LEAF_DARK];
 const WOOD_COLORS: [Rgb; 2] = [WOOD, WOOD_DARK];
 const STONE_COLORS: [Rgb; 2] = [STONE, STONE_DARK];

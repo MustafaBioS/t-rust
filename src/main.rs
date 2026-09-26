@@ -1,4 +1,7 @@
 mod draw;
+
+mod player;
+
 use draw::Chunk;
 use draw::display_view;
 use draw::Block::Air as A;
@@ -9,6 +12,7 @@ use draw::Block::Stone as S;
 use draw::Block::Wood as W;
 use draw::Block::TreeLeaf as L;
 fn main() {
+
 let state: Chunk = [
         [A, A, A, A, A, A, A, A, A, A, A, C, C, C, A, A, A, A,],
         [A, A, A, L, L, L, A, A, A, A, C, C, C, C, C, A, A, A,],
