@@ -1,5 +1,5 @@
 use rand::seq::IndexedRandom;
-use crate::player::get_player_position;
+use crate::player::{get_player_position, Player};
 
 pub const CHUNK_WIDTH: usize = 18;
 pub const CHUNK_HEIGHT: usize = 10;
@@ -35,6 +35,7 @@ const LEAF: Rgb = (100, 150, 100);
 const LEAF_DARK: Rgb = (70, 100, 70);
 const CLOUD: Rgb = (200, 200, 200);
 const CLOUD_DARK: Rgb = (150, 150, 150);
+
 const LEAF_COLORS: [Rgb; 2] = [LEAF, LEAF_DARK];
 const WOOD_COLORS: [Rgb; 2] = [WOOD, WOOD_DARK];
 const STONE_COLORS: [Rgb; 2] = [STONE, STONE_DARK];
@@ -42,7 +43,6 @@ const DIRT_COLORS: [Rgb; 2] = [DIRT, DIRT_DARK];
 const GRASS_COLORS: [Rgb; 4] = [GRASS, GRASS_DARK, DIRT_DARK, DIRT];
 const CLOUD_COLORS: [Rgb; 2] = [CLOUD, CLOUD_DARK];
 const SKY_COLORS: [Rgb; 1] = [SKY];
-
 
 fn get_texture(block: Block) -> Texture {
     match block {
@@ -81,8 +81,9 @@ fn generate_texture(block: Block) -> Texture {
 }
 
 
-pub fn display_view(active_chunk: &Chunk) {
-    for row in active_chunk {
+pub fn display_view(active_chunk: &Chunk, player: &Player) {
+
+    for (y, row) in active_chunk.iter().enumerate() {
         let mut textures = [Texture::default(); 20];
         for i in 0..CHUNK_WIDTH {
             textures[i] = get_texture(row[i]);
@@ -90,8 +91,12 @@ pub fn display_view(active_chunk: &Chunk) {
 
         for line in 0..4 {
             for i in 0..CHUNK_WIDTH {
-                for color in textures[i][line] {
-                    print!("\x1b[38;2;{};{};{}m██\x1b[0m", color.0, color.1, color.2);
+                for (col, color) in textures[i][line].iter().enumerate() {
+                    if player.x == i as i32 && player.y == y as i32 && line == 2 && col == 1 {
+                        print!("\x1b[48;2;{};{};{}m @ \x1b[0m", color.0, color.1, color.2);
+                    } else {
+                        print!("\x1b[38;2;{};{};{}m██\x1b[0m", color.0, color.1, color.2);
+                    }
                 }
             }
             println!();
