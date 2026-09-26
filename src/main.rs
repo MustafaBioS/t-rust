@@ -11,7 +11,12 @@ use draw::Block::Dirt as D;
 use draw::Block::Stone as S;
 use draw::Block::Wood as W;
 use draw::Block::TreeLeaf as L;
-fn main() {
+use crate::player::{get_player_position, move_player};
+use crossterm::terminal::{disable_raw_mode, enable_raw_mode};
+use std::io;
+
+
+fn main() -> io::Result<()> {
 
 let state: Chunk = [
         [A, A, A, A, A, A, A, A, A, A, A, C, C, C, A, A, A, A,],
@@ -25,5 +30,19 @@ let state: Chunk = [
         [D, D, S, D, D, D, S, D, D, S, S, D, S, S, S, S, S, S,],
         [S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S,],
     ];
-    display_view(&state);
+    let mut player = get_player_position();
+
+    enable_raw_mode();
+
+    loop {
+        display_view(&state, &player);
+        if !move_player(&mut player)? {
+            break;
+        }
+    }
+
+    disable_raw_mode();
+
+    Ok(())
+
 }
