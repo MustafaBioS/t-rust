@@ -1,5 +1,5 @@
+use crate::player::Player;
 use rand::seq::IndexedRandom;
-use crate::player::{get_player_position, Player};
 
 pub const CHUNK_WIDTH: usize = 18;
 pub const CHUNK_HEIGHT: usize = 10;
@@ -11,12 +11,12 @@ pub enum Block {
     Dirt,
     Stone,
     Wood,
-    TreeLeaf
+    TreeLeaf,
 }
 
 pub type Rgb = (u8, u8, u8);
 
-pub type Texture = [[ Rgb; 4]; 4];
+pub type Texture = [[Rgb; 4]; 4];
 
 pub type Chunk = [[Block; CHUNK_WIDTH]; CHUNK_HEIGHT];
 
@@ -56,7 +56,7 @@ fn get_texture(block: Block) -> Texture {
     }
 }
 
-fn get_color_pallet(block: Block) -> &'static [Rgb]  {
+fn get_color_pallet(block: Block) -> &'static [Rgb] {
     match block {
         Block::Air => &SKY_COLORS,
         Block::Cloud => &CLOUD_COLORS,
@@ -80,9 +80,8 @@ fn generate_texture(block: Block) -> Texture {
     texture
 }
 
-
 pub fn display_view(active_chunk: &Chunk, player: &Player) {
-
+    print!("\x1b[H");
     for (y, row) in active_chunk.iter().enumerate() {
         let mut textures = [Texture::default(); 20];
         for i in 0..CHUNK_WIDTH {
