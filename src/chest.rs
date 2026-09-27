@@ -3,7 +3,7 @@ pub struct Chest {
     pub y: i32,
     pub items: Vec<Item>,
     pub opened: bool,
-}
+};
 
 pub enum Item {
     Wood,
@@ -11,11 +11,16 @@ pub enum Item {
     Gold,
 }
 
-pub fn get_chest() {
+pub fn get_chest() -> Chest {
     let chest = Chest {
         x: 10,
         y: 5,
-        items: vec![Item::Wood, Item::Gold],
+        items: vec![
+            Item::Wood,
+            Item::Gold,
+        ],
         opened: false,
     };
+
+    chest
 }
