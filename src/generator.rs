@@ -2,6 +2,7 @@ use crate::draw::{Block, CHUNK_HEIGHT, CHUNK_WIDTH, Position, State, TextureMap}
 use crate::player::Player;
 use rand::Rng;
 use rand::rngs::ThreadRng;
+use std::cmp::{max, min};
 
 pub struct CoordHolder {
     x: i32,
@@ -16,6 +17,8 @@ pub struct WorldContent {
     pub texture_map: TextureMap,
     pub rng: ThreadRng,
 }
+
+const BASE_FLOOR_Y: u32 = 6;
 
 impl Default for WorldContent {
     fn default() -> Self {
@@ -42,6 +45,38 @@ impl WorldContent {
 
     pub fn set_seed(&mut self, seed: u64) {
         self.seed = seed;
+    }
+
+    fn above_or_below(&mut self, value: u32) -> i32 {
+        match self.rng.next_u32() % 2 == 0 {
+            true => -1 * value as i32,
+            false => 1 * value as i32,
+        }
+    }
+
+    fn generate_terrain_difference(&mut self, last_ground_y: u32) -> i32 {
+        if last_ground_y == 0 {
+            let difference: u32 = self.rng.next_u32() % 4;
+            return self.above_or_below(difference);
+        }
+        let delta_terrain: u32 = last_ground_y.abs_diff(BASE_FLOOR_Y);
+        if delta_terrain == 0 {
+            return 0;
+        }
+        let difference: u32 = self.rng.next_u32() % delta_terrain;
+        self.above_or_below(difference)
+    }
+    pub fn generate_initial_chunk(&mut self) {
+        println!("Generating initial chunk");
+        let mut last_ground_y: u32 = 0;
+        for col in 0..CHUNK_WIDTH {
+            let mut ground_base =
+                BASE_FLOOR_Y as i32 + self.generate_terrain_difference(last_ground_y);
+            ground_base = max(ground_base, 0);
+            ground_base = min(ground_base, CHUNK_HEIGHT as i32 - 1);
+            self.rendered_chunks[1][ground_base as usize][col] = Block::Grass;
+            last_ground_y = ground_base as u32;
+        }
     }
 }
 
