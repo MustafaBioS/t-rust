@@ -20,8 +20,6 @@ pub type Texture = [[Rgb; 4]; 4];
 
 pub type Chunk = [[Block; CHUNK_WIDTH]; CHUNK_HEIGHT];
 
-pub type State = [Chunk; 3];
-
 pub type Position = (i32, i32);
 
 pub type TextureMap = std::collections::HashMap<Position, Texture>;
@@ -118,7 +116,7 @@ pub fn display_view(
             println!();
         }
     }
-    if player.is_paused {
+    if player.is_paused() {
         print!("\x1b[H");
 
         let sky = format!("\x1b[48;2;{};{};{}m", SKY.0, SKY.1, SKY.2);
