@@ -11,13 +11,23 @@ pub enum Item {
     Gold,
 }
 
-pub fn get_chest() -> Chest {
-    let chest = Chest {
-        x: 10,
-        y: 5,
-        items: vec![Item::Wood, Item::Gold],
-        opened: false,
-    };
+impl Default for Chest {
+    fn default() -> Self {
+        Chest {
+            x: 10,
+            y: 5,
+            items: vec![Item::Wood, Item::Gold],
+            opened: false,
+        }
+    }
+}
 
-    chest
+impl Chest {
+    pub fn open(&mut self) {
+        self.opened = true;
+    }
+
+    pub fn close(&mut self) {
+        self.opened = false;
+    }
 }
