@@ -1,4 +1,4 @@
-use crate::draw::{Block, Chunk};
+use crate::draw::{Block, CHUNK_HEIGHT, CHUNK_WIDTH, Chunk};
 use crossterm::event::{Event, KeyCode, KeyEvent, KeyEventKind, read};
 use std::io;
 
@@ -9,15 +9,63 @@ pub struct Player {
     pub is_paused: bool,
 }
 
+enum Direction {
+    Up,
+    Down,
+    Left,
+    Right,
+}
+impl Default for Player {
+    fn default() -> Self {
+        Self {
+            x: 0,
+            y: 0,
+            is_grounded: true,
+            is_paused: false,
+        }
+    }
+}
+
 impl Player {
+    fn clamp(&mut self) {
+        self.x = self.x.clamp(0, CHUNK_WIDTH as i32 - 1);
+        self.y = self.y.clamp(0, CHUNK_HEIGHT as i32 - 1);
+    }
+
     pub fn set_position(&mut self, x: i32, y: i32) {
         self.x = x;
         self.y = y;
     }
+
+    pub fn shift_x_by(&mut self, amount: i32) {
+        self.x += amount;
+        self.clamp();
+    }
+
+    pub fn shift_y_by(&mut self, amount: i32) {
+        self.y += amount;
+        self.clamp();
+    }
+
+    pub fn get_x(&self) -> i32 {
+        self.x
+    }
+
+    pub fn get_y(&self) -> i32 {
+        self.y
+    }
+
+    pub fn get_shift(&self, direction: Direction) -> usize {
+        match direction {
+            Direction::Up => (self.y + 1) as usize,
+            Direction::Down => (self.y - 1) as usize,
+            Direction::Left => (self.x - 1) as usize,
+            Direction::Right => (self.x + 1) as usize,
+        }
+    }
 }
 
 pub fn move_player(player: &mut Player, state: &Chunk) -> io::Result<bool> {
-
     if let Event::Key(KeyEvent { code, kind, .. }) = read()? {
         if kind != KeyEventKind::Press {
             return Ok(true);
@@ -38,34 +86,28 @@ pub fn move_player(player: &mut Player, state: &Chunk) -> io::Result<bool> {
         }
 
         match code {
-            KeyCode::Char('d') | KeyCode::Right if !player.is_paused => {
-                let new_x = player.x + 1;
-
-                if state[player.y as usize][new_x as usize] == Block::Air {
-                    player.x = new_x;
+            KeyCode::Char('d') | KeyCode::Right => {
+                if state[player.y as usize][player.get_shift(Direction::Right)] == Block::Air {
+                    player.shift_x_by(1);
                 }
 
                 if player.is_grounded == false {
-                    player.y += 1
+                    player.shift_y_by(1);
                 }
             }
-            KeyCode::Char('a') | KeyCode::Left if !player.is_paused => {
-                let new_x = player.x - 1;
-
-                if state[player.y as usize][new_x as usize] == Block::Air {
-                    player.x = new_x;
+            KeyCode::Char('a') | KeyCode::Left => {
+                if state[player.y as usize][player.get_shift(Direction::Left)] == Block::Air {
+                    player.shift_x_by(-1);
                 }
 
                 if player.is_grounded == false {
-                    player.y += 1
+                    player.shift_y_by(1);
                 }
             }
-            KeyCode::Char(' ') | KeyCode::Up if !player.is_paused => {
+            KeyCode::Char(' ') | KeyCode::Up => {
                 if player.is_grounded == true {
-                    let new_y = player.y - 1;
-
-                    if state[new_y as usize][player.x as usize] == Block::Air {
-                        player.y = new_y;
+                    if state[player.get_shift(Direction::Down)][player.x as usize] == Block::Air {
+                        player.shift_y_by(-1);
                     }
                 }
             }
