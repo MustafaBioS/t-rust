@@ -1,6 +1,7 @@
 use crate::draw::{Block, CHUNK_HEIGHT, CHUNK_WIDTH};
 use crate::generator::WorldContent;
 use crossterm::event::{Event, KeyCode, KeyEvent, KeyEventKind, read};
+use std::cmp::{max, min};
 use std::io;
 
 pub struct Player {
@@ -58,10 +59,10 @@ impl Player {
 
     fn get_shift(&self, direction: Direction) -> usize {
         match direction {
-            Direction::Up => (self.y - 1) as usize,
-            Direction::Down => (self.y + 1) as usize,
-            Direction::Left => (self.x - 1) as usize,
-            Direction::Right => (self.x + 1) as usize,
+            Direction::Up => max(self.y - 1, 0) as usize,
+            Direction::Down => min((self.y + 1), CHUNK_HEIGHT as i32 - 1) as usize,
+            Direction::Left => max(self.x - 1, 0) as usize,
+            Direction::Right => min((self.x + 1), CHUNK_WIDTH as i32 - 1) as usize,
         }
     }
 
