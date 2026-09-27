@@ -99,8 +99,8 @@ impl Player {
         self.is_paused
     }
 
-    pub fn ground_player(&mut self) {
-        self.is_grounded = true;
+    pub fn set_ground(&mut self, value: bool) {
+        self.is_grounded = value;
     }
     pub fn is_grounded(&self, game_state: &WorldContent) -> bool {
         game_state.state[self.get_shift(Direction::Down)][self.get_shift(Direction::Left)]
@@ -119,7 +119,9 @@ pub fn move_player(game_state: &mut WorldContent) -> io::Result<bool> {
         }
 
         if game_state.player.is_grounded(&game_state) {
-            game_state.player.ground_player();
+            game_state.player.set_ground(true);
+        } else {
+            game_state.player.set_ground(false);
         }
 
         match code {
