@@ -1,9 +1,9 @@
-use crossterm::event::{read, Event, KeyCode, KeyEvent};
+use crossterm::event::{Event, KeyCode, KeyEvent, read};
 use std::io;
 
 pub struct Player {
     pub x: i32,
-    pub y: i32
+    pub y: i32,
 }
 
 pub fn get_player_position() -> Player {
@@ -13,8 +13,7 @@ pub fn get_player_position() -> Player {
 }
 
 pub fn move_player(player: &mut Player) -> io::Result<bool> {
-
-     if let Event::Key(KeyEvent { code, .. }) = read()? {
+    if let Event::Key(KeyEvent { code, .. }) = read()? {
         match code {
             KeyCode::Char('d') | KeyCode::Right => {
                 player.x += 1;
