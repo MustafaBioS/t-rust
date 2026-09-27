@@ -7,10 +7,11 @@ pub struct Player {
     pub x: i32,
     pub y: i32,
     pub is_grounded: bool,
+    pub is_paused: bool,
 }
 
 pub fn get_player_position() -> Player {
-    let mut player = Player { x: 5, y: 5, is_grounded: true };
+    let mut player = Player { x: 5, y: 5, is_grounded: true, is_paused: false };
 
     player
 }
@@ -21,8 +22,14 @@ pub fn move_player(player: &mut Player, state: &Chunk) -> io::Result<bool> {
             return Ok(true);
         }
 
-        if state[(player.y + 1) as usize][(player.x + 1) as usize] == Block::Grass
-            || state[(player.y + 1) as usize][(player.x + 1) as usize] == Block::Dirt  {
+        let below_y = (player.y + 1) as usize;
+        let left_x = (player.x - 1) as usize;
+        let right_x = (player.x + 1) as usize;
+        let center_x = player.x as usize;
+
+        if state[below_y][left_x] != Block::Air
+            || state[below_y][center_x] != Block::Air
+            || state[below_y][right_x] != Block::Air {
             player.is_grounded = true
         } else {
             player.is_grounded = false
@@ -61,6 +68,9 @@ pub fn move_player(player: &mut Player, state: &Chunk) -> io::Result<bool> {
                         player.y = new_y;
                     }
                 }
+            }
+            KeyCode::Char('p') | KeyCode::Esc => {
+                player.is_paused = !player.is_paused;
             }
             KeyCode::Char('q') => {
                 return Ok(false);

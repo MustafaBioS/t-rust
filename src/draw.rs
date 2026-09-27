@@ -103,7 +103,7 @@ pub fn display_view(
                 for (col, color) in textures[i][line].iter().enumerate() {
                     if player.x == i  as i32 && player.y == y as i32 && col == 1 && (line == 2 || line == 3) {
                         print!(
-                            "\x1b[48;2;{};{};{}m@@\x1b[0m",
+                            "\x1b[48;2;{};{};{}m██\x1b[0m",
                             color.0, color.1, color.2
                         );
                     } else {
