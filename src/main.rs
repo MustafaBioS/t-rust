@@ -36,7 +36,7 @@ let state: Chunk = [
 
     loop {
         display_view(&state, &player);
-        if !move_player(&mut player)? {
+        if !move_player(&mut player, &state)? {
             break;
         }
     }
