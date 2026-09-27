@@ -36,6 +36,7 @@ fn main() -> io::Result<()> {
         [D, D, S, D, D, D, S, D, D, S, S, D, S, S, S, S, S, S],
         [S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S],
     ];
+
     let mut player = get_player_position();
 
     enable_raw_mode();
