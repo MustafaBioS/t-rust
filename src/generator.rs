@@ -27,6 +27,7 @@ impl Default for WorldContent {
                 x: 0,
                 y: 0,
                 is_grounded: true,
+                is_paused: false,
             },
             texture_map: TextureMap::default(),
             rng: rand::rng(),

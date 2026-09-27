@@ -1,4 +1,3 @@
-use std::cmp::PartialEq;
 use crate::draw::{Block, Chunk};
 use crossterm::event::{Event, KeyCode, KeyEvent, KeyEventKind, read};
 use std::io;
@@ -10,10 +9,11 @@ pub struct Player {
     pub is_paused: bool,
 }
 
-pub fn get_player_position() -> Player {
-    let mut player = Player { x: 5, y: 5, is_grounded: true, is_paused: false };
-
-    player
+impl Player {
+    pub fn set_position(&mut self, x: i32, y: i32) {
+        self.x = x;
+        self.y = y;
+    }
 }
 
 pub fn move_player(player: &mut Player, state: &Chunk) -> io::Result<bool> {
@@ -29,7 +29,8 @@ pub fn move_player(player: &mut Player, state: &Chunk) -> io::Result<bool> {
 
         if state[below_y][left_x] != Block::Air
             || state[below_y][center_x] != Block::Air
-            || state[below_y][right_x] != Block::Air {
+            || state[below_y][right_x] != Block::Air
+        {
             player.is_grounded = true
         } else {
             player.is_grounded = false
@@ -46,7 +47,6 @@ pub fn move_player(player: &mut Player, state: &Chunk) -> io::Result<bool> {
                 if player.is_grounded == false {
                     player.y += 1
                 }
-
             }
             KeyCode::Char('a') | KeyCode::Left => {
                 let new_x = player.x - 1;
@@ -58,7 +58,6 @@ pub fn move_player(player: &mut Player, state: &Chunk) -> io::Result<bool> {
                 if player.is_grounded == false {
                     player.y += 1
                 }
-
             }
             KeyCode::Char(' ') | KeyCode::Up => {
                 if player.is_grounded == true {
