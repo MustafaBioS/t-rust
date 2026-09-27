@@ -1,6 +1,6 @@
+use crate::chest::get_chest;
 use crate::draw::{Block, CHUNK_HEIGHT, CHUNK_WIDTH};
 use crate::generator::WorldContent;
-use crate::chest::get_chest;
 use crossterm::event::{Event, KeyCode, KeyEvent, KeyEventKind, read};
 use std::cmp::{max, min};
 use std::io;
@@ -165,13 +165,15 @@ pub fn move_player(game_state: &mut WorldContent) -> io::Result<bool> {
                 }
             }
             KeyCode::Char('E') if !game_state.player.is_paused => {
-                chest = get_chest();
+                let mut chest = get_chest();
 
                 if game_state.state[game_state.player.get_y() as usize]
-                [(game_state.player.get_shift(Direction::Right)) as usize] == Block::Chest
+                    [(game_state.player.get_shift(Direction::Right)) as usize]
+                    == Block::Chest
                     || game_state.state[game_state.player.get_y() as usize]
-                    [(game_state.player.get_shift(Direction::Left)) as usize] == Block::Chest
-                    && chest.opened == false
+                        [(game_state.player.get_shift(Direction::Left)) as usize]
+                        == Block::Chest
+                        && chest.opened == false
                 {
                     chest.opened = true
                 }
