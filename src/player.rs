@@ -21,8 +21,8 @@ pub fn move_player(player: &mut Player, state: &Chunk) -> io::Result<bool> {
             return Ok(true);
         }
 
-        if state[player.y as usize][player.x as usize] == Block::Grass
-            || state[player.y as usize][player.x as usize] == Block::Dirt  {
+        if state[(player.y + 1) as usize][(player.x + 1) as usize] == Block::Grass
+            || state[(player.y + 1) as usize][(player.x + 1) as usize] == Block::Dirt  {
             player.is_grounded = true
         } else {
             player.is_grounded = false
