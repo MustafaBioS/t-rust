@@ -63,6 +63,10 @@ fn get_texture(
     let pallet: &'static [Rgb] = get_color_pallet(block);
     for row in 0..4 {
         for col in 0..4 {
+            if row == 0 && block == Block::Grass {
+                texture[row as usize][col as usize] = GRASS;
+                continue;
+            }
             let texture_coords = (coords.0 * 4 + col, coords.1 * 4 + row);
             let seeded_random: u64 = hash(&texture_coords, seed) % pallet.len() as u64;
             texture[row as usize][col as usize] = pallet[seeded_random as usize];
