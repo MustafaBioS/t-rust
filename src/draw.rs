@@ -4,7 +4,7 @@ use rand::seq::IndexedRandom;
 
 pub const CHUNK_WIDTH: usize = 18;
 pub const CHUNK_HEIGHT: usize = 10;
-#[derive(Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub enum Block {
     Air,
     Cloud,
@@ -101,7 +101,7 @@ pub fn display_view(
         for line in 0..4 {
             for i in 0..CHUNK_WIDTH {
                 for (col, color) in textures[i][line].iter().enumerate() {
-                    if player.x == i as i32 && player.y == y as i32 && col == 1 && (line == 2 || line == 3) {
+                    if player.x == i  as i32 && player.y == y as i32 && col == 1 && (line == 2 || line == 3) {
                         print!(
                             "\x1b[48;2;{};{};{}m@@\x1b[0m",
                             color.0, color.1, color.2
