@@ -1,4 +1,48 @@
-use crate::draw::Position;
+use crate::draw::{Block, CHUNK_HEIGHT, CHUNK_WIDTH, Position, State, TextureMap};
+use crate::player::Player;
+use rand::Rng;
+use rand::rngs::ThreadRng;
+
+pub struct CoordHolder {
+    x: i32,
+    y: i32,
+}
+
+pub struct WorldContent {
+    pub camera: CoordHolder,
+    pub seed: u64,
+    pub rendered_chunks: State,
+    pub player_position: Player,
+    pub texture_map: TextureMap,
+    pub rng: ThreadRng,
+}
+
+impl Default for WorldContent {
+    fn default() -> Self {
+        Self {
+            camera: CoordHolder { x: 0, y: 0 },
+            seed: 0,
+            rendered_chunks: [[[Block::Air; CHUNK_WIDTH]; CHUNK_HEIGHT]; 3],
+            player_position: Player {
+                x: 0,
+                y: 0,
+                is_grounded: true,
+            },
+            texture_map: TextureMap::default(),
+            rng: rand::rng(),
+        }
+    }
+}
+
+impl WorldContent {
+    pub fn generate_seed(&mut self) {
+        self.seed = self.rng.next_u64();
+    }
+
+    pub fn set_seed(&mut self, seed: u64) {
+        self.seed = seed;
+    }
+}
 
 pub fn hash(coords: &Position, seed: &u64) -> u64 {
     let mut h = seed
