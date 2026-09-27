@@ -11,13 +11,12 @@ use draw::display_view;
 use std::io;
 
 fn main() -> io::Result<()> {
-    let mut game_started = menu();
+    menu();
     let mut game_state = WorldContent::default();
     game_state.generate_seed();
     game_state.player_position.set_position(5, 5);
     game_state.generate_initial_chunk();
 
-    if game_started == true {
         enable_raw_mode()?;
 
         loop {
@@ -32,7 +31,6 @@ fn main() -> io::Result<()> {
                 &game_state.rendered_chunks[1],
             )? {
                 break;
-            }
         }
     }
 

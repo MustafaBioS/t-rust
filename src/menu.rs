@@ -1,7 +1,8 @@
 use std::io;
+use std::process::exit;
 use crate::main;
 
-pub fn menu() -> bool {
+pub fn menu() {
     println!(" ");
     println!("Main Menu");
     println!(" ");
@@ -16,12 +17,16 @@ pub fn menu() -> bool {
 
     let trimmed = inp.trim();
 
-    if trimmed == "1" {
-        true
-    } else if trimmed == "2" {
-        false
-    } else {
-        println!("Invalid Choice");
-        false
+    match trimmed {
+        "1" => {
+            return;
+        }
+        "2" => {
+            exit(0)
+        }
+        _ => {
+            println!("Invalid Choice");
+            exit(1)
+        }
     }
 }
