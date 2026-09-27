@@ -3,7 +3,7 @@ use crate::player::{get_player_position, Player};
 
 pub const CHUNK_WIDTH: usize = 18;
 pub const CHUNK_HEIGHT: usize = 10;
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum Block {
     Air,
     Cloud,
