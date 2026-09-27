@@ -66,7 +66,6 @@ impl Player {
         }
     }
 
-
     // checking for collisions
 
     pub fn is_clear(&self, direction: Direction, game_state: &WorldContent) -> bool {
@@ -109,7 +108,7 @@ impl Player {
     }
 
     // on ground check
-    
+
     pub fn is_grounded(&self, game_state: &WorldContent) -> bool {
         game_state.state[self.get_shift(Direction::Down)][self.get_shift(Direction::Left)]
             != Block::Air
@@ -159,7 +158,10 @@ pub fn move_player(game_state: &mut WorldContent) -> io::Result<bool> {
                 }
             }
             KeyCode::Char('E') if !game_state.player.is_paused => {
-                if state[player.y as usize][(player.x + 1) as usize] == Block::Chest {
+                if game_state.state[game_state.player.get_y() as usize]
+                    [(game_state.player.get_shift(Direction::Right)) as usize]
+                    == Block::Chest
+                {
                     panic!("Opened Chest!")
                 }
             }

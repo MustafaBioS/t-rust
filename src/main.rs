@@ -1,3 +1,4 @@
+mod chest;
 mod draw;
 mod generator;
 pub mod menu;
