@@ -35,8 +35,8 @@ impl Player {
     }
 
     pub fn set_position(&mut self, x: i32, y: i32) {
-        self.x = x;
-        self.y = y;
+        self.x = x.clamp(0, CHUNK_WIDTH as i32 - 1);
+        self.y = y.clamp(0, CHUNK_HEIGHT as i32 - 1);
     }
 
     fn shift_x_by(&mut self, amount: i32) {
