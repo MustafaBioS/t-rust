@@ -86,7 +86,7 @@ pub fn move_player(player: &mut Player, state: &Chunk) -> io::Result<bool> {
         }
 
         match code {
-            KeyCode::Char('d') | KeyCode::Right => {
+            KeyCode::Char('d') | KeyCode::Right if !player.is_paused => {
                 if state[player.y as usize][player.get_shift(Direction::Right)] == Block::Air {
                     player.shift_x_by(1);
                 }
@@ -95,7 +95,7 @@ pub fn move_player(player: &mut Player, state: &Chunk) -> io::Result<bool> {
                     player.shift_y_by(1);
                 }
             }
-            KeyCode::Char('a') | KeyCode::Left => {
+            KeyCode::Char('a') | KeyCode::Left if !player.is_paused => {
                 if state[player.y as usize][player.get_shift(Direction::Left)] == Block::Air {
                     player.shift_x_by(-1);
                 }
@@ -104,7 +104,7 @@ pub fn move_player(player: &mut Player, state: &Chunk) -> io::Result<bool> {
                     player.shift_y_by(1);
                 }
             }
-            KeyCode::Char(' ') | KeyCode::Up => {
+            KeyCode::Char(' ') | KeyCode::Up if !player.is_paused => {
                 if player.is_grounded == true {
                     if state[player.get_shift(Direction::Up)][player.x as usize] == Block::Air {
                         player.shift_y_by(-1);
