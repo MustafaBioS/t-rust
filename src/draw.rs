@@ -118,4 +118,23 @@ pub fn display_view(
             println!();
         }
     }
+    if player.is_paused {
+        print!("\x1b[H");
+
+        let sky = format!(
+            "\x1b[48;2;{};{};{}m",
+            SKY.0, SKY.1, SKY.2
+        );
+
+        print!("{}", sky);
+
+        println!("\n\n");
+        println!("██████████████████████████████");
+        println!("██                          ██");
+        println!("██          PAUSED          ██");
+        println!("██                          ██");
+        println!("██████████████████████████████");
+
+        print!("\x1b[0m");
+    }
 }
