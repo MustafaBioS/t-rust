@@ -1,5 +1,5 @@
 use crate::draw::{Block, Chunk};
-use crossterm::event::{Event, KeyCode, KeyEvent, read};
+use crossterm::event::{Event, KeyCode, KeyEvent, KeyEventKind, read};
 use std::io;
 
 pub struct Player {
@@ -14,7 +14,11 @@ pub fn get_player_position() -> Player {
 }
 
 pub fn move_player(player: &mut Player, state: &Chunk) -> io::Result<bool> {
-    if let Event::Key(KeyEvent { code, .. }) = read()? {
+    if let Event::Key(KeyEvent { code, kind, .. }) = read()? {
+        if kind != KeyEventKind::Press {
+            return Ok(true);
+        }
+
         match code {
             KeyCode::Char('d') | KeyCode::Right => {
                 let new_x = player.x + 1;
