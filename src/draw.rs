@@ -1,9 +1,10 @@
+use crate::generator::hash;
 use crate::player::Player;
 use rand::seq::IndexedRandom;
 
 pub const CHUNK_WIDTH: usize = 18;
 pub const CHUNK_HEIGHT: usize = 10;
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Block {
     Air,
     Cloud,
@@ -21,6 +22,10 @@ pub type Texture = [[Rgb; 4]; 4];
 pub type Chunk = [[Block; CHUNK_WIDTH]; CHUNK_HEIGHT];
 
 pub type State = [Chunk; 3];
+
+pub type Position = (i32, i32);
+
+pub type TextureMap = std::collections::HashMap<Position, Texture>;
 
 const SKY: Rgb = (135, 206, 235);
 const GRASS: Rgb = (76, 175, 80);
@@ -44,16 +49,28 @@ const GRASS_COLORS: [Rgb; 4] = [GRASS, GRASS_DARK, DIRT_DARK, DIRT];
 const CLOUD_COLORS: [Rgb; 2] = [CLOUD, CLOUD_DARK];
 const SKY_COLORS: [Rgb; 1] = [SKY];
 
-fn get_texture(block: Block) -> Texture {
-    match block {
-        Block::Dirt => generate_texture(Block::Dirt),
-        Block::Grass => generate_texture(Block::Grass),
-        Block::Stone => generate_texture(Block::Stone),
-        Block::Wood => generate_texture(Block::Wood),
-        Block::TreeLeaf => generate_texture(Block::TreeLeaf),
-        Block::Cloud => generate_texture(Block::Cloud),
-        Block::Air => generate_texture(Block::Air),
+fn get_texture(
+    block: Block,
+    texture_map: &mut TextureMap,
+    coords: &Position,
+    seed: &u64,
+) -> Texture {
+    match texture_map.get(coords) {
+        Some(texture) => return *texture,
+        None => (),
     }
+
+    let mut texture = Texture::default();
+    let pallet: &'static [Rgb] = get_color_pallet(block);
+    for row in 0..4 {
+        for col in 0..4 {
+            let texture_coords = (coords.0 * 4 + col, coords.1 * 4 + row);
+            let seeded_random: u64 = hash(&texture_coords, seed) % pallet.len() as u64;
+            texture[row as usize][col as usize] = pallet[seeded_random as usize];
+        }
+    }
+    texture_map.insert(*coords, texture);
+    texture
 }
 
 fn get_color_pallet(block: Block) -> &'static [Rgb] {
@@ -68,24 +85,17 @@ fn get_color_pallet(block: Block) -> &'static [Rgb] {
     }
 }
 
-fn generate_texture(block: Block) -> Texture {
-    let mut rng = rand::rng();
-    let mut texture = Texture::default();
-    let pallet: &'static [Rgb] = get_color_pallet(block);
-    for row in 0..4 {
-        for col in 0..4 {
-            texture[row][col] = *pallet.choose(&mut rng).unwrap();
-        }
-    }
-    texture
-}
-
-pub fn display_view(active_chunk: &Chunk, player: &Player) {
+pub fn display_view(
+    active_chunk: &Chunk,
+    player: &Player,
+    texture_map: &mut TextureMap,
+    seed: &u64,
+) {
     print!("\x1b[H");
     for (y, row) in active_chunk.iter().enumerate() {
-        let mut textures = [Texture::default(); 20];
+        let mut textures = [Texture::default(); CHUNK_WIDTH];
         for i in 0..CHUNK_WIDTH {
-            textures[i] = get_texture(row[i]);
+            textures[i] = get_texture(row[i], texture_map, &(i as i32, y as i32), seed);
         }
 
         for line in 0..4 {
