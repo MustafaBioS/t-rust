@@ -91,8 +91,11 @@ pub fn display_view(active_chunk: &Chunk, player: &Player) {
         for line in 0..4 {
             for i in 0..CHUNK_WIDTH {
                 for (col, color) in textures[i][line].iter().enumerate() {
-                    if player.x == i as i32 && player.y == y as i32 && line == 2 && col == 1 {
-                        print!("\x1b[48;2;{};{};{}m @ \x1b[0m", color.0, color.1, color.2);
+                    if player.x == i as i32 && player.y == y as i32 && col == 1 && (line == 2 || line == 3) {
+                        print!(
+                            "\x1b[48;2;{};{};{}m@@\x1b[0m",
+                            color.0, color.1, color.2
+                        );
                     } else {
                         print!("\x1b[38;2;{};{};{}m██\x1b[0m", color.0, color.1, color.2);
                     }
