@@ -56,12 +56,13 @@ impl WorldContent {
 
     fn generate_terrain_difference(&mut self, last_ground_y: u32) -> i32 {
         if last_ground_y == 0 {
-            let difference: u32 = self.rng.next_u32() % 4;
+            let difference: u32 = self.rng.next_u32() % 3;
             return self.above_or_below(difference);
         }
         let delta_terrain: u32 = last_ground_y.abs_diff(BASE_FLOOR_Y);
         if delta_terrain == 0 {
-            return 0;
+            let difference = self.rng.next_u32() % 2;
+            return difference as i32;
         }
         let difference: u32 = self.rng.next_u32() % delta_terrain;
         self.above_or_below(difference)
@@ -75,6 +76,15 @@ impl WorldContent {
             ground_base = max(ground_base, 0);
             ground_base = min(ground_base, CHUNK_HEIGHT as i32 - 1);
             self.rendered_chunks[1][ground_base as usize][col] = Block::Grass;
+            let dirt_depth = (self.rng.next_u32() % 2) + 1;
+            for i in 1..dirt_depth {
+                let dirt_spot = min(CHUNK_HEIGHT as i32 - 1, ground_base + i as i32);
+                self.rendered_chunks[1][dirt_spot as usize][col] = Block::Dirt;
+            }
+            let stone_depth = dirt_depth + ground_base as u32;
+            for i in stone_depth as usize..CHUNK_HEIGHT {
+                self.rendered_chunks[1][i][col] = Block::Stone;
+            }
             last_ground_y = ground_base as u32;
         }
     }
