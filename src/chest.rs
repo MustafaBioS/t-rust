@@ -5,7 +5,7 @@ pub struct Chest {
     pub opened: bool,
 }
 
-Pub enum Item {
+pub enum Item {
     Wood,
     Stone,
     Gold,
@@ -15,11 +15,7 @@ pub fn get_chest() {
     let chest = Chest {
         x: 10,
         y: 5,
-        items: vec![
-            Items::Wood,
-            Items::Gold,
-        ],
+        items: vec![Item::Wood, Item::Gold],
         opened: false,
     };
-
 }

@@ -87,7 +87,7 @@ fn get_color_pallet(block: Block) -> &'static [Rgb] {
         Block::Stone => &STONE_COLORS,
         Block::Wood => &WOOD_COLORS,
         Block::TreeLeaf => &LEAF_COLORS,
-        Block::Chest => &CHEST,
+        Block::Chest => &CHEST_COLORS,
     }
 }
 
