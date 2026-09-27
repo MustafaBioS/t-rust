@@ -175,7 +175,8 @@ pub fn move_player(game_state: &mut WorldContent) -> io::Result<bool> {
                         == Block::Chest
                         && chest.opened == false
                 {
-                    chest.open()
+                    chest.open();
+                    game_state.player.claim_treasure();
                 }
             }
             KeyCode::Char('p') | KeyCode::Esc => {
