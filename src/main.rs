@@ -13,22 +13,19 @@ use std::io;
 fn main() -> io::Result<()> {
     menu();
     let mut game_state = WorldContent::default();
-    game_state.player_position.set_position(5, 5);
+    game_state.player.set_position(5, 5);
     game_state.initialize_state();
 
     enable_raw_mode()?;
 
     loop {
         display_view(
-            &game_state.rendered_chunks[1],
-            &game_state.player_position,
+            &game_state.state,
+            &game_state.player,
             &mut game_state.texture_map,
             &game_state.seed,
         );
-        if !move_player(
-            &mut game_state.player_position,
-            &game_state.rendered_chunks[1],
-        )? {
+        if !move_player(&mut game_state)? {
             break;
         }
     }

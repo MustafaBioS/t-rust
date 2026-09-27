@@ -1,4 +1,4 @@
-use crate::draw::{Block, CHUNK_HEIGHT, CHUNK_WIDTH, Position, State, TextureMap};
+use crate::draw::{Block, CHUNK_HEIGHT, CHUNK_WIDTH, Chunk, Position, TextureMap};
 use crate::player::Player;
 use rand::Rng;
 use rand::rngs::ThreadRng;
@@ -13,8 +13,8 @@ pub struct WorldContent {
     pub camera: CoordHolder,
     pub seed: u64,
     pub is_dirty: bool,
-    pub rendered_chunks: State,
-    pub player_position: Player,
+    pub state: Chunk,
+    pub player: Player,
     pub texture_map: TextureMap,
     pub rng: ThreadRng,
 }
@@ -26,9 +26,9 @@ impl Default for WorldContent {
         Self {
             camera: CoordHolder { x: 0, y: 0 },
             seed: 0,
-            rendered_chunks: [[[Block::Air; CHUNK_WIDTH]; CHUNK_HEIGHT]; 3],
+            state: [[Block::Air; CHUNK_WIDTH]; CHUNK_HEIGHT],
             is_dirty: false,
-            player_position: Player::default(),
+            player: Player::default(),
             texture_map: TextureMap::default(),
             rng: rand::rng(),
         }
@@ -74,24 +74,22 @@ impl WorldContent {
     }
     fn generate_initial_chunks(&mut self) {
         let mut last_ground_y: u32 = 0;
-        for foo in 0..3 {
-            for col in 0..CHUNK_WIDTH {
-                let mut ground_base =
-                    BASE_FLOOR_Y as i32 + self.generate_terrain_difference(last_ground_y);
-                ground_base = max(ground_base, 0);
-                ground_base = min(ground_base, CHUNK_HEIGHT as i32 - 1);
-                self.rendered_chunks[foo][ground_base as usize][col] = Block::Grass;
-                let dirt_depth = (self.rng.next_u32() % 2) + 1;
-                for i in 1..dirt_depth {
-                    let dirt_spot = min(CHUNK_HEIGHT as i32 - 1, ground_base + i as i32);
-                    self.rendered_chunks[foo][dirt_spot as usize][col] = Block::Dirt;
-                }
-                let stone_depth = dirt_depth + ground_base as u32;
-                for i in stone_depth as usize..CHUNK_HEIGHT {
-                    self.rendered_chunks[foo][i][col] = Block::Stone;
-                }
-                last_ground_y = ground_base as u32;
+        for col in 0..CHUNK_WIDTH {
+            let mut ground_base =
+                BASE_FLOOR_Y as i32 + self.generate_terrain_difference(last_ground_y);
+            ground_base = max(ground_base, 0);
+            ground_base = min(ground_base, CHUNK_HEIGHT as i32 - 1);
+            self.state[ground_base as usize][col] = Block::Grass;
+            let dirt_depth = (self.rng.next_u32() % 2) + 1;
+            for i in 1..dirt_depth {
+                let dirt_spot = min(CHUNK_HEIGHT as i32 - 1, ground_base + i as i32);
+                self.state[dirt_spot as usize][col] = Block::Dirt;
             }
+            let stone_depth = dirt_depth + ground_base as u32;
+            for i in stone_depth as usize..CHUNK_HEIGHT {
+                self.state[i][col] = Block::Stone;
+            }
+            last_ground_y = ground_base as u32;
         }
     }
 

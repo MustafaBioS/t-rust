@@ -1,6 +1,6 @@
+use crate::main;
 use std::io;
 use std::process::exit;
-use crate::main;
 
 pub fn menu() {
     println!(" ");
@@ -21,9 +21,7 @@ pub fn menu() {
         "1" => {
             return;
         }
-        "2" => {
-            exit(0)
-        }
+        "2" => exit(0),
         _ => {
             println!("Invalid Choice");
             exit(1)
