@@ -72,26 +72,32 @@ impl WorldContent {
         let difference: u32 = self.rng.next_u32() % delta_terrain;
         self.above_or_below(difference)
     }
-    pub fn generate_initial_chunk(&mut self) {
-        println!("Generating initial chunk");
+    fn generate_initial_chunks(&mut self) {
         let mut last_ground_y: u32 = 0;
-        for col in 0..CHUNK_WIDTH {
-            let mut ground_base =
-                BASE_FLOOR_Y as i32 + self.generate_terrain_difference(last_ground_y);
-            ground_base = max(ground_base, 0);
-            ground_base = min(ground_base, CHUNK_HEIGHT as i32 - 1);
-            self.rendered_chunks[1][ground_base as usize][col] = Block::Grass;
-            let dirt_depth = (self.rng.next_u32() % 2) + 1;
-            for i in 1..dirt_depth {
-                let dirt_spot = min(CHUNK_HEIGHT as i32 - 1, ground_base + i as i32);
-                self.rendered_chunks[1][dirt_spot as usize][col] = Block::Dirt;
+        for foo in 0..3 {
+            for col in 0..CHUNK_WIDTH {
+                let mut ground_base =
+                    BASE_FLOOR_Y as i32 + self.generate_terrain_difference(last_ground_y);
+                ground_base = max(ground_base, 0);
+                ground_base = min(ground_base, CHUNK_HEIGHT as i32 - 1);
+                self.rendered_chunks[foo][ground_base as usize][col] = Block::Grass;
+                let dirt_depth = (self.rng.next_u32() % 2) + 1;
+                for i in 1..dirt_depth {
+                    let dirt_spot = min(CHUNK_HEIGHT as i32 - 1, ground_base + i as i32);
+                    self.rendered_chunks[foo][dirt_spot as usize][col] = Block::Dirt;
+                }
+                let stone_depth = dirt_depth + ground_base as u32;
+                for i in stone_depth as usize..CHUNK_HEIGHT {
+                    self.rendered_chunks[foo][i][col] = Block::Stone;
+                }
+                last_ground_y = ground_base as u32;
             }
-            let stone_depth = dirt_depth + ground_base as u32;
-            for i in stone_depth as usize..CHUNK_HEIGHT {
-                self.rendered_chunks[1][i][col] = Block::Stone;
-            }
-            last_ground_y = ground_base as u32;
         }
+    }
+
+    pub fn initialize_state(&mut self) {
+        self.generate_seed();
+        self.generate_initial_chunks();
     }
 }
 
