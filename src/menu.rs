@@ -1,3 +1,4 @@
+use crossterm::terminal::disable_raw_mode;
 use std::io;
 use std::process::exit;
 
@@ -21,9 +22,13 @@ pub fn menu() {
         "1" => {
             return;
         }
-        "2" => exit(0),
+        "2" => {
+            disable_raw_mode().unwrap();
+            exit(0);
+        }
         _ => {
             println!("Invalid Choice");
+            disable_raw_mode().unwrap();
             exit(1)
         }
     }
