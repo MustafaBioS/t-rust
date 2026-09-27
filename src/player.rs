@@ -9,6 +9,7 @@ pub struct Player {
     y: i32,
     is_grounded: bool,
     is_paused: bool,
+    treasure_claimed: u32,
 }
 
 enum Direction {
@@ -24,6 +25,7 @@ impl Default for Player {
             y: 0,
             is_grounded: false,
             is_paused: false,
+            treasure_claimed: 0,
         }
     }
 }
@@ -64,6 +66,10 @@ impl Player {
             Direction::Left => max(self.x - 1, 0) as usize,
             Direction::Right => min((self.x + 1), CHUNK_WIDTH as i32 - 1) as usize,
         }
+    }
+
+    pub fn claim_treasure(&mut self) {
+        self.treasure_claimed += 1;
     }
 
     // checking for collisions
