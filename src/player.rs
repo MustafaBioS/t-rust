@@ -138,8 +138,22 @@ pub fn move_player(game_state: &mut WorldContent) -> io::Result<bool> {
             game_state.player.set_ground(false);
         }
 
+        if game_state.player.is_paused() {
+            match code {
+                KeyCode::Char('p') => {
+                    game_state.player.is_paused = false;
+                    return Ok(true);
+                }
+                KeyCode::Esc => {
+                    game_state.player.is_paused = false;
+                    return Ok(true);
+                }
+                _ => return Ok(true),
+            }
+        }
+
         match code {
-            KeyCode::Char('d') | KeyCode::Right if !game_state.player.is_paused() => {
+            KeyCode::Char('d') | KeyCode::Right => {
                 if game_state.player.is_clear(Direction::Right, game_state) {
                     game_state.player.mv(Direction::Right);
                 }
@@ -148,7 +162,7 @@ pub fn move_player(game_state: &mut WorldContent) -> io::Result<bool> {
                     game_state.player.mv(Direction::Down);
                 }
             }
-            KeyCode::Char('a') | KeyCode::Left if !game_state.player.is_paused() => {
+            KeyCode::Char('a') | KeyCode::Left => {
                 if game_state.player.is_clear(Direction::Left, game_state) {
                     game_state.player.mv(Direction::Left);
                 }
@@ -157,14 +171,14 @@ pub fn move_player(game_state: &mut WorldContent) -> io::Result<bool> {
                     game_state.player.mv(Direction::Down);
                 }
             }
-            KeyCode::Char(' ') | KeyCode::Up if !game_state.player.is_paused => {
+            KeyCode::Char(' ') | KeyCode::Up => {
                 if game_state.player.is_grounded == true {
                     if game_state.player.is_clear(Direction::Up, game_state) {
                         game_state.player.mv(Direction::Up);
                     }
                 }
             }
-            KeyCode::Char('E') if !game_state.player.is_paused => {
+            KeyCode::Char('E') => {
                 let mut chest = Chest::default();
 
                 if game_state.state[game_state.player.get_y() as usize]
@@ -179,12 +193,12 @@ pub fn move_player(game_state: &mut WorldContent) -> io::Result<bool> {
                     game_state.player.claim_treasure();
                 }
             }
-            KeyCode::Char('p') | KeyCode::Esc => {
-                game_state.player.is_paused = !game_state.player.is_paused;
-            }
+
             KeyCode::Char('q') => {
                 return Ok(false);
             }
+            KeyCode::Char('p') => game_state.player.is_paused = true,
+            KeyCode::Esc => game_state.player.is_paused = true,
             _ => {}
         }
     }
