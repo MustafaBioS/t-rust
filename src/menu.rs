@@ -11,6 +11,7 @@ pub fn menu() {
     println!(" ");
 
     let mut inp = String::new();
+    
     io::stdin()
         .read_line(&mut inp)
         .expect("Failed to read line");
