@@ -1,6 +1,8 @@
 mod draw;
+mod generator;
 mod player;
 
+use crate::draw::TextureMap;
 use crate::player::{get_player_position, move_player};
 use crossterm::terminal::{disable_raw_mode, enable_raw_mode};
 use draw::Block::Air as A;
@@ -12,9 +14,16 @@ use draw::Block::TreeLeaf as L;
 use draw::Block::Wood as W;
 use draw::Chunk;
 use draw::display_view;
+use rand::Rng;
+use std::collections::HashMap;
 use std::io;
 
 fn main() -> io::Result<()> {
+    let mut rng = rand::rng();
+    let seed: u64 = rng.next_u64();
+
+    let mut texture_map: TextureMap = HashMap::new();
+
     let state: Chunk = [
         [A, A, A, A, A, A, A, A, A, A, A, C, C, C, A, A, A, A],
         [A, A, A, L, L, L, A, A, A, A, C, C, C, C, C, A, A, A],
@@ -32,7 +41,7 @@ fn main() -> io::Result<()> {
     enable_raw_mode();
 
     loop {
-        display_view(&state, &player);
+        display_view(&state, &player, &mut texture_map, &seed);
         if !move_player(&mut player, &state)? {
             break;
         }
