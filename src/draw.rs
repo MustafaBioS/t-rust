@@ -104,8 +104,8 @@ pub fn display_view(
         for line in 0..4 {
             for i in 0..CHUNK_WIDTH {
                 for (col, color) in textures[i][line].iter().enumerate() {
-                    if player.x == i as i32
-                        && player.y == y as i32
+                    if player.get_x() == i as i32
+                        && player.get_y() == y as i32
                         && col == 1
                         && (line == 2 || line == 3)
                     {
@@ -121,10 +121,7 @@ pub fn display_view(
     if player.is_paused {
         print!("\x1b[H");
 
-        let sky = format!(
-            "\x1b[48;2;{};{};{}m",
-            SKY.0, SKY.1, SKY.2
-        );
+        let sky = format!("\x1b[48;2;{};{};{}m", SKY.0, SKY.1, SKY.2);
 
         print!("{}", sky);
 

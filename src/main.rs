@@ -14,7 +14,7 @@ fn main() -> io::Result<()> {
     game_state.player_position.set_position(5, 5);
     game_state.generate_initial_chunk();
 
-    enable_raw_mode();
+    enable_raw_mode()?;
 
     loop {
         display_view(
@@ -31,7 +31,7 @@ fn main() -> io::Result<()> {
         }
     }
 
-    disable_raw_mode();
+    disable_raw_mode()?;
 
     Ok(())
 }

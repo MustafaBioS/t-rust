@@ -12,6 +12,7 @@ pub struct CoordHolder {
 pub struct WorldContent {
     pub camera: CoordHolder,
     pub seed: u64,
+    pub is_dirty: bool,
     pub rendered_chunks: State,
     pub player_position: Player,
     pub texture_map: TextureMap,
@@ -26,12 +27,8 @@ impl Default for WorldContent {
             camera: CoordHolder { x: 0, y: 0 },
             seed: 0,
             rendered_chunks: [[[Block::Air; CHUNK_WIDTH]; CHUNK_HEIGHT]; 3],
-            player_position: Player {
-                x: 0,
-                y: 0,
-                is_grounded: true,
-                is_paused: false,
-            },
+            is_dirty: false,
+            player_position: Player::default(),
             texture_map: TextureMap::default(),
             rng: rand::rng(),
         }
@@ -52,6 +49,14 @@ impl WorldContent {
             true => -1 * value as i32,
             false => 1 * value as i32,
         }
+    }
+
+    pub fn mark_dirty(&mut self) {
+        self.is_dirty = true;
+    }
+
+    pub fn mark_clean(&mut self) {
+        self.is_dirty = false;
     }
 
     fn generate_terrain_difference(&mut self, last_ground_y: u32) -> i32 {
