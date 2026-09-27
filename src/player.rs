@@ -17,6 +17,7 @@ impl Player {
 }
 
 pub fn move_player(player: &mut Player, state: &Chunk) -> io::Result<bool> {
+
     if let Event::Key(KeyEvent { code, kind, .. }) = read()? {
         if kind != KeyEventKind::Press {
             return Ok(true);
@@ -37,7 +38,7 @@ pub fn move_player(player: &mut Player, state: &Chunk) -> io::Result<bool> {
         }
 
         match code {
-            KeyCode::Char('d') | KeyCode::Right => {
+            KeyCode::Char('d') | KeyCode::Right if !player.is_paused => {
                 let new_x = player.x + 1;
 
                 if state[player.y as usize][new_x as usize] == Block::Air {
@@ -48,7 +49,7 @@ pub fn move_player(player: &mut Player, state: &Chunk) -> io::Result<bool> {
                     player.y += 1
                 }
             }
-            KeyCode::Char('a') | KeyCode::Left => {
+            KeyCode::Char('a') | KeyCode::Left if !player.is_paused => {
                 let new_x = player.x - 1;
 
                 if state[player.y as usize][new_x as usize] == Block::Air {
@@ -59,7 +60,7 @@ pub fn move_player(player: &mut Player, state: &Chunk) -> io::Result<bool> {
                     player.y += 1
                 }
             }
-            KeyCode::Char(' ') | KeyCode::Up => {
+            KeyCode::Char(' ') | KeyCode::Up if !player.is_paused => {
                 if player.is_grounded == true {
                     let new_y = player.y - 1;
 
