@@ -12,6 +12,7 @@ pub enum Block {
     Stone,
     Wood,
     TreeLeaf,
+    Chest,
 }
 
 pub type Rgb = (u8, u8, u8);
@@ -25,6 +26,8 @@ pub type Position = (i32, i32);
 pub type TextureMap = std::collections::HashMap<Position, Texture>;
 
 const SKY: Rgb = (135, 206, 235);
+const CHEST: Rgb = (160, 100, 40);
+const CHEST_DARK: Rgb = (100, 60, 20);
 const GRASS: Rgb = (76, 175, 80);
 const GRASS_DARK: Rgb = (46, 125, 50);
 const DIRT: Rgb = (134, 96, 67);
@@ -44,6 +47,7 @@ const STONE_COLORS: [Rgb; 2] = [STONE, STONE_DARK];
 const DIRT_COLORS: [Rgb; 2] = [DIRT, DIRT_DARK];
 const GRASS_COLORS: [Rgb; 4] = [GRASS, GRASS_DARK, DIRT_DARK, DIRT];
 const CLOUD_COLORS: [Rgb; 2] = [CLOUD, CLOUD_DARK];
+const CHEST_COLORS: [Rgb; 2] = [CHEST, CHEST_DARK];
 const SKY_COLORS: [Rgb; 1] = [SKY];
 
 fn get_texture(
@@ -83,6 +87,7 @@ fn get_color_pallet(block: Block) -> &'static [Rgb] {
         Block::Stone => &STONE_COLORS,
         Block::Wood => &WOOD_COLORS,
         Block::TreeLeaf => &LEAF_COLORS,
+        Block::Chest => &CHEST,
     }
 }
 
