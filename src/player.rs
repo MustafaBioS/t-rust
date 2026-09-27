@@ -31,6 +31,13 @@ pub fn move_player(player: &mut Player, state: &Chunk) -> io::Result<bool> {
                     player.x = new_x;
                 }
             }
+            KeyCode::Char(' ') | KeyCode::Up => {
+                let new_y = player.y - 1;
+
+                if state[player.y as usize][player.x as usize] == Block::Air {
+                    player.y = new_y;
+                }
+            }
             KeyCode::Char('q') => {
                 return Ok(false);
             }
