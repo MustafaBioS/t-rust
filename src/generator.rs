@@ -1,3 +1,4 @@
+use crate::draw::Block::Chest;
 use crate::draw::{Block, CHUNK_HEIGHT, CHUNK_WIDTH, Chunk, Position, TextureMap};
 use crate::player::Player;
 use rand::Rng;
@@ -94,6 +95,9 @@ impl WorldContent {
             let mut ground_base =
                 generator_coords.y + self.generate_terrain_difference(&generator_coords);
             ground_base = ground_base.clamp(3, CHUNK_HEIGHT as i32 - 2);
+            if col == 0 {
+                self.state[ground_base as usize - 1][0] = Chest
+            }
             self.state[ground_base as usize][col] = Block::Grass;
             let dirt_depth = u32_hash(&(col as i32, 1), &self.seed) % 2 + 1;
             for i in 1..=dirt_depth {

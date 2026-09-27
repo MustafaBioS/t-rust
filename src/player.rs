@@ -178,7 +178,7 @@ pub fn move_player(game_state: &mut WorldContent) -> io::Result<bool> {
                     }
                 }
             }
-            KeyCode::Char('E') => {
+            KeyCode::Char('e') => {
                 let mut chest = Chest::default();
 
                 if game_state.state[game_state.player.get_y() as usize]
@@ -191,6 +191,7 @@ pub fn move_player(game_state: &mut WorldContent) -> io::Result<bool> {
                 {
                     chest.open();
                     game_state.player.claim_treasure();
+                    game_state.state[chest.y as usize][chest.x as usize] = Block::Air;
                 }
             }
 
