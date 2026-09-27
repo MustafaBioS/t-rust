@@ -22,4 +22,6 @@ T-Rust has multiple features including, but not limited to:**
 > **ESC / P** -> Pause<br>
 
 # Extra Information
-First ever Rust project made by me and @Nullskulls, we used this project as an opportunity for us to learn Rust while also making a fun project which is the game we made in the CLI!
+First ever Rust project made by me and @Nullskulls, we used this project as an opportunity for us to learn Rust while also making a fun project which is the game we made in the CLI!<br>
+**P.S:**
+This game is unfinished and still has a lot of features we need to add and things we need to fix, so keep in mind that this is just the **FIRST** demo.
