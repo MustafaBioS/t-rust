@@ -57,8 +57,8 @@ impl Player {
 
     pub fn get_shift(&self, direction: Direction) -> usize {
         match direction {
-            Direction::Up => (self.y + 1) as usize,
-            Direction::Down => (self.y - 1) as usize,
+            Direction::Up => (self.y - 1) as usize,
+            Direction::Down => (self.y + 1) as usize,
             Direction::Left => (self.x - 1) as usize,
             Direction::Right => (self.x + 1) as usize,
         }
@@ -106,7 +106,7 @@ pub fn move_player(player: &mut Player, state: &Chunk) -> io::Result<bool> {
             }
             KeyCode::Char(' ') | KeyCode::Up => {
                 if player.is_grounded == true {
-                    if state[player.get_shift(Direction::Down)][player.x as usize] == Block::Air {
+                    if state[player.get_shift(Direction::Up)][player.x as usize] == Block::Air {
                         player.shift_y_by(-1);
                     }
                 }
