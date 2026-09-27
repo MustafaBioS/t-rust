@@ -2,11 +2,35 @@ use crate::draw::{Block, CHUNK_HEIGHT, CHUNK_WIDTH, Chunk, Position, TextureMap}
 use crate::player::Player;
 use rand::Rng;
 use rand::rngs::ThreadRng;
-use std::cmp::{max, min};
+use std::cmp::min;
 
 pub struct CoordHolder {
     x: i32,
     y: i32,
+}
+
+impl Default for CoordHolder {
+    fn default() -> Self {
+        CoordHolder { x: 0, y: 0 }
+    }
+}
+impl CoordHolder {
+    pub fn add(&mut self, coord_to_add: &CoordHolder) {
+        self.x += coord_to_add.x;
+        self.y += coord_to_add.y;
+    }
+
+    pub fn to_position(&self) -> (i32, i32) {
+        (self.x, self.y)
+    }
+
+    pub fn set_x(&mut self, x: i32) {
+        self.x = x;
+    }
+
+    pub fn set_y(&mut self, y: i32) {
+        self.y = y;
+    }
 }
 
 pub struct WorldContent {
@@ -44,8 +68,8 @@ impl WorldContent {
         self.seed = seed;
     }
 
-    fn above_or_below(&mut self, value: u32) -> i32 {
-        match self.rng.next_u32() % 2 == 0 {
+    fn above_or_below(&mut self, value: u32, coords: &CoordHolder) -> i32 {
+        match u32_hash(&coords.to_position(), &self.seed) % 2 == 0 {
             true => -1 * value as i32,
             false => 1 * value as i32,
         }
@@ -59,43 +83,34 @@ impl WorldContent {
         self.is_dirty = false;
     }
 
-    fn generate_terrain_difference(&mut self, last_ground_y: u32) -> i32 {
-        if last_ground_y == 0 {
-            let difference: u32 = self.rng.next_u32() % 3;
-            return self.above_or_below(difference);
-        }
-        let delta_terrain: u32 = last_ground_y.abs_diff(BASE_FLOOR_Y);
-        if delta_terrain == 0 {
-            let difference = self.rng.next_u32() % 2;
-            return difference as i32;
-        }
-        let difference: u32 = self.rng.next_u32() % delta_terrain;
-        self.above_or_below(difference)
+    fn generate_terrain_difference(&mut self, coords: &CoordHolder) -> i32 {
+        (u32_hash(&coords.to_position(), &self.seed) % 3) as i32 - 1
     }
-    fn generate_initial_chunks(&mut self) {
-        let mut last_ground_y: u32 = 0;
+    fn generate_initial_chunk(&mut self) {
+        let mut generator_coords: CoordHolder = CoordHolder::default();
+        generator_coords.set_y(BASE_FLOOR_Y as i32);
         for col in 0..CHUNK_WIDTH {
+            generator_coords.set_x(col as i32);
             let mut ground_base =
-                BASE_FLOOR_Y as i32 + self.generate_terrain_difference(last_ground_y);
-            ground_base = max(ground_base, 0);
-            ground_base = min(ground_base, CHUNK_HEIGHT as i32 - 1);
+                generator_coords.y + self.generate_terrain_difference(&generator_coords);
+            ground_base = ground_base.clamp(3, CHUNK_HEIGHT as i32 - 2);
             self.state[ground_base as usize][col] = Block::Grass;
-            let dirt_depth = (self.rng.next_u32() % 2) + 1;
-            for i in 1..dirt_depth {
+            let dirt_depth = u32_hash(&(col as i32, 1), &self.seed) % 2 + 1;
+            for i in 1..=dirt_depth {
                 let dirt_spot = min(CHUNK_HEIGHT as i32 - 1, ground_base + i as i32);
                 self.state[dirt_spot as usize][col] = Block::Dirt;
             }
-            let stone_depth = dirt_depth + ground_base as u32;
+            let stone_depth = dirt_depth + ground_base as u32 + 1;
             for i in stone_depth as usize..CHUNK_HEIGHT {
                 self.state[i][col] = Block::Stone;
             }
-            last_ground_y = ground_base as u32;
+            generator_coords.set_y(ground_base);
         }
     }
 
     pub fn initialize_state(&mut self) {
         self.generate_seed();
-        self.generate_initial_chunks();
+        self.generate_initial_chunk();
     }
 }
 
@@ -107,4 +122,8 @@ pub fn hash(coords: &Position, seed: &u64) -> u64 {
     h = h.wrapping_mul(0xFF51AFD7ED558CCD);
     h ^= h >> 33;
     h
+}
+
+fn u32_hash(position: &Position, seed: &u64) -> u32 {
+    hash(&position, seed) as u32
 }
